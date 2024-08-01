@@ -5,6 +5,7 @@ const portOpt = option({
 	type: number,
 	long: "port",
 	short: "p",
+	env: "WEB_PORT",
 	defaultValue: () => 3000,
 });
 
