@@ -1,8 +1,9 @@
 import { Hono } from "hono";
+import root from "./routes/root";
 
 const mkServer = (port: number) => {
 	const app = new Hono();
-	app.get("/", (c) => c.text("Hello Bun!"));
+	app.route("/", root);
 
 	return {
 		port,
