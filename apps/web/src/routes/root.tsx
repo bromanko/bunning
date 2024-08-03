@@ -4,7 +4,9 @@ import type { FC } from "hono/jsx";
 const Layout: FC = ({ children }) => {
 	return (
 		<html lang="en-US">
-			<head>TEST</head>
+			<head>
+				<title>Test</title>
+			</head>
 			<body>{children}</body>
 		</html>
 	);
@@ -28,7 +30,7 @@ const Top: FC<{ messages: string[] }> = (props: {
 const app = new Hono();
 
 app.get("/", (c) => {
-	const messages = ["Good Morning", "Good Evening", "Good Night"];
+	const messages = ["Good Morning", "Good Morrow", "Good Night"];
 	return c.html(<Top messages={messages} />);
 });
 
