@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { FC } from "hono/jsx";
+import styles from "../static/styles.css";
 
 const Layout: FC = ({ children }) => {
 	return (
@@ -7,7 +8,8 @@ const Layout: FC = ({ children }) => {
 			<head>
 				<title>Test</title>
 			</head>
-			<body>{children}</body>
+			<body class="red">{children}</body>
+			<style>{styles}</style>
 		</html>
 	);
 };
