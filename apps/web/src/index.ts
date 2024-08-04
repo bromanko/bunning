@@ -1,5 +1,5 @@
-import { command, number, option, run } from "cmd-ts";
-import mkServer from "./server";
+import { command, number, option, flag, run } from "cmd-ts";
+import mkServer from "./server.ts";
 
 const portOpt = option({
 	type: number,
@@ -9,13 +9,25 @@ const portOpt = option({
 	defaultValue: () => 3000,
 });
 
+const liveReloadFlag = flag({
+	long: "live-reload",
+	env: "WEB_LIVE_RELOAD",
+	defaultValue: () => false,
+});
+
+const optsToString = (opts: { port: number; liveReload: boolean }) =>
+	`
+Running server with config:
+	Port: ${opts.port}
+	Live Reload: ${opts.liveReload}`;
+
 const mkProgram = () =>
 	command({
 		name: "web",
-		args: { port: portOpt },
+		args: { port: portOpt, liveReload: liveReloadFlag },
 		async handler(opts) {
-			console.log(`Web server listening on port ${opts.port}`);
-			return Bun.serve(mkServer(opts.port));
+			console.info(optsToString(opts));
+			return Bun.serve(mkServer(opts.port, opts.liveReload));
 		},
 	});
 

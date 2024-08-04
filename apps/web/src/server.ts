@@ -4,20 +4,17 @@ import path from "node:path";
 import root from "./routes/root";
 import st from "./routes/static";
 
-const mkServer = (port: number) => {
+const mkServer = (port: number, liveReload: boolean) => {
 	const app = new Hono();
 	app.route("/", root);
 	app.route("/static/", st);
+	const server = { port, fetch: app.fetch };
 
-	return withHtmlLiveReload(
-		{
-			port,
-			fetch: app.fetch,
-		},
-		{
-			watchPath: path.resolve(import.meta.dir),
-		},
-	);
+	return liveReload
+		? withHtmlLiveReload(server, {
+				watchPath: path.resolve(import.meta.dir),
+			})
+		: server;
 };
 
 export default mkServer;
