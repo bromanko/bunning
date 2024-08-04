@@ -1,15 +1,14 @@
 import { Hono } from "hono";
 import type { FC } from "hono/jsx";
-import styles from "../static/styles.css";
 
 const Layout: FC = ({ children }) => {
 	return (
 		<html lang="en-US">
 			<head>
 				<title>Test</title>
+				<link rel="stylesheet" href="/static/styles.css" />
 			</head>
 			<body class="red">{children}</body>
-			<style>{styles}</style>
 		</html>
 	);
 };
