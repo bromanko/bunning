@@ -8,11 +8,14 @@
 		"build:bun": "bun build --target=bun --outdir build src/index.ts",
 		"build:css": "bunx tailwindcss -i src/static/styles.css -o src/static/styles.out.css",
 		"start": "bun run src/index.ts",
-		"dev": "bun run --hot ./src/index.ts"
+		"dev": "concurrently -n bun,css -c blue,green \"bun run dev:bun\" \"bun run dev:css\"",
+		"dev:bun": "bun run --hot ./src/index.ts",
+		"dev:css": "bunx tailwindcss -i src/static/styles.css -o src/static/styles.out.css --watch"
 	},
 	"devDependencies": {
 		"@types/bun": "latest",
-		"bun-html-live-reload": "0.1.3"
+		"bun-html-live-reload": "0.1.3",
+		"concurrently": "8.2.2"
 	},
 	"peerDependencies": {
 		"typescript": "^5.0.0"
