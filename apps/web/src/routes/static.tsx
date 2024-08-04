@@ -1,10 +1,8 @@
 import { Hono } from "hono";
-import styles from "../static/styles.css";
+import { serveStatic } from "hono/bun";
 
 const app = new Hono();
 
-app.get("/styles.css", (c) => {
-	return c.text(styles, 200, { "Content-Type": "text/css" });
-});
+app.get("/styles.css", serveStatic({ path: "./src/static/styles.out.css" }));
 
 export default app;

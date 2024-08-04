@@ -6,6 +6,7 @@
 		"clean": "rm -rf build",
 		"build": "bun run clean && bun run build:bun",
 		"build:bun": "bun build --target=bun --outdir build src/index.ts",
+		"build:css": "bunx tailwindcss -i src/static/styles.css -o src/static/styles.out.css",
 		"start": "bun run src/index.ts",
 		"dev": "bun run --hot ./src/index.ts"
 	},
