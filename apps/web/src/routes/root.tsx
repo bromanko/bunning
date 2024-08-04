@@ -8,7 +8,7 @@ const Layout: FC = ({ children }) => {
 				<title>Test</title>
 				<link rel="stylesheet" href="/static/styles.css" />
 			</head>
-			<body class="red">{children}</body>
+			<body class="bg-red-100">{children}</body>
 		</html>
 	);
 };
