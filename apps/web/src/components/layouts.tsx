@@ -14,7 +14,7 @@ export const HtmlBase: FC = ({ title = "Bunning", children }) => {
 				<title>{title}</title>
 				<link rel="stylesheet" href="/static/styles.css" />
 			</head>
-			{children}
+			<body class="m-4">{children}</body>
 		</html>
 	);
 };

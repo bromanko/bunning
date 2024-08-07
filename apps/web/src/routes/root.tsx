@@ -1,20 +1,7 @@
 import { Hono } from "hono";
-import type { FC } from "hono/jsx";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { HtmlBase, Layout } from "../components/layouts";
-
-const Top: FC<{ messages: string[] }> = (props: {
-	messages: string[];
-}) => (
-	<>
-		<h1>Hello Hono!</h1>
-		<ul>
-			{props.messages.map((message) => {
-				return <li key={message}>{message}!!</li>;
-			})}
-		</ul>
-	</>
-);
+import { H1 } from "../components/typeography";
 
 const app = new Hono();
 
@@ -28,8 +15,12 @@ app.use(
 );
 
 app.get("/", (c) => {
-	const messages = ["Good Morning", "Good Morrow", "Good Night"];
-	return c.render(<Top messages={messages} />, { title: "Hello Hono" });
+	return c.render(
+		<>
+			<H1>Header 1</H1>
+		</>,
+		{ title: "Hello Hono" },
+	);
 });
 
 export default app;
