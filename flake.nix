@@ -1,5 +1,5 @@
 {
-  description = "Bun Experiments";
+  description = "Something new";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
@@ -17,7 +17,8 @@
         };
         packages = { };
 
-        devShells.default = pkgs.mkShell { buildInputs = with pkgs; [ bun ]; };
+        devShells.default =
+          pkgs.mkShell { buildInputs = with pkgs; [ bun dotnet-sdk_8 ]; };
       };
     };
 }
