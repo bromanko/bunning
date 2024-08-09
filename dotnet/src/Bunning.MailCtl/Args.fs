@@ -4,8 +4,8 @@ open Argu
 
 module Args =
     type ProcessArgs =
-        | [<AltCommandLine("-h")>] Host of host: string
-        | [<AltCommandLine("-p")>] Port of port: int
+        | [<AltCommandLine("-h"); Mandatory>] Host of host: string
+        | [<AltCommandLine("-p"); >] Port of port: int
 
         interface IArgParserTemplate with
             member s.Usage =

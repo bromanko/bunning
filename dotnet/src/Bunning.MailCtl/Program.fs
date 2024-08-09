@@ -12,6 +12,7 @@ module Main =
             | [Args.Version] ->
                 Commands.Version.exec() |> printfn "%s"
                 0
+                | [Args.Process args] -> Commands.Process.exec args
             | _ ->
                 printfn $"%A{r}"
                 0
