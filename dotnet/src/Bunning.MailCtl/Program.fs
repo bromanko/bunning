@@ -9,6 +9,9 @@ module Main =
             | [] ->
                 Args.printUsage() |> printfn "%s"
                 1
+            | [Args.Version] ->
+                Commands.Version.exec() |> printfn "%s"
+                0
             | _ ->
                 printfn $"%A{r}"
                 0
