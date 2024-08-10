@@ -8,9 +8,8 @@ open FsToolkit.ErrorHandling.Operator.TaskResult
 open MailKit
 
 module Process =
-    let private getMessages (msgIds: UniqueId seq) =
-        msgIds
-        |> Seq.iter (printfn "%A")
+    let private getMessages client (msgIds: UniqueId seq) =
+        msgIds |> Seq.iter (printfn "%A")
         TaskResult.ok ()
 
     let exec (args: ParseResults<ProcessArgs>) =
@@ -19,4 +18,5 @@ module Process =
         let userName = args.GetResult(UserName)
         let password = args.GetResult(Password)
 
-        Imap.getMessageIds host port userName password >>= getMessages
+        Imap.connect host port userName password
+        >>= (fun client -> Imap.getMessageIds client >>= getMessages client)
