@@ -17,6 +17,7 @@ module Imap =
                 do! client.AuthenticateAsync(userName, password)
                 do! client.Inbox.OpenAsync(FolderAccess.ReadOnly) |> Task.ignore
                 let! ids = client.Inbox.SearchAsync(SearchQuery.All)
+                do! client.DisconnectAsync(quit = true)
                 return ids |> Result.Ok
             with ex ->
                 return Result.Error ex
