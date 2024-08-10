@@ -11,24 +11,35 @@ module Imap =
     let connect host port (userName: string) password =
         task {
             let client = new ImapClient()
+
             try
                 do! client.ConnectAsync(host, port, SecureSocketOptions.Auto)
                 do! client.AuthenticateAsync(userName, password)
                 return Ok client
             with ex ->
-                return Result.Error ex
+                return Error ex
 
         }
+
+    let disconnect (client: ImapClient) =
+        task {
+            try
+                do! client.DisconnectAsync(quit = true)
+                client.Dispose()
+                return Ok()
+            with ex ->
+                return Error ex
+        }
+
 
     let getMessageIds (client: ImapClient) =
         task {
             try
                 do! client.Inbox.OpenAsync(FolderAccess.ReadOnly) |> Task.ignore
                 let! ids = client.Inbox.SearchAsync(SearchQuery.All)
-                do! client.DisconnectAsync(quit = true)
-                return ids |> Result.Ok
+                return ids |> Ok
             with ex ->
-                return Result.Error ex
+                return Error ex
         }
 
     let getMessage (client: ImapClient) (msgId: UniqueId) =

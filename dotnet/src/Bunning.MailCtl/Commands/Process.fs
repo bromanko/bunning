@@ -6,11 +6,20 @@ open Bunning.MailCtl
 open FsToolkit.ErrorHandling
 open FsToolkit.ErrorHandling.Operator.TaskResult
 open MailKit
+open Microsoft.FSharp.Collections
+open MimeKit
+open MimeKit.Text
 
 module Process =
-    let private getMessages client (msgIds: UniqueId seq) =
-        msgIds |> Seq.iter (printfn "%A")
+    let private messageToImg (msg: MimeMessage) =
+        printfn $"%A{msg.GetTextBody(format = TextFormat.Html)}"
         TaskResult.ok ()
+
+    let private getMessages client (msgIds: UniqueId seq) =
+        msgIds
+        |> List.ofSeq
+        |> List.traverseTaskResultM (fun msgId -> Imap.getMessage client msgId >>= messageToImg)
+
 
     let exec (args: ParseResults<ProcessArgs>) =
         let host = args.GetResult(Host)
@@ -19,4 +28,7 @@ module Process =
         let password = args.GetResult(Password)
 
         Imap.connect host port userName password
-        >>= (fun client -> Imap.getMessageIds client >>= getMessages client)
+        >>= (fun client ->
+            Imap.getMessageIds client
+            >>= getMessages client
+            >>= (fun _ -> Imap.disconnect client))
