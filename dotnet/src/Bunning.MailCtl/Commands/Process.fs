@@ -3,7 +3,6 @@ namespace Bunning.MailCtl.Commands
 open Argu
 open Bunning.MailCtl.Args
 open Bunning.MailCtl
-open FSharpPlus
 
 module Process =
     let exec (args: ParseResults<ProcessArgs>) =

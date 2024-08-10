@@ -35,7 +35,7 @@ module Args =
             let results = parser.ParseCommandLine(argv)
             results.GetAllResults() |> Result.Ok
         with :? ArguParseException as e ->
-            Result.Error e.Message
+            Result.Error e
 
     let printUsage =
         parser.PrintUsage

@@ -1,11 +1,10 @@
 ﻿namespace Bunning.MailCtl
 
-open System.Threading.Tasks
-open FSharpx
+open FsToolkit.ErrorHandling
 
 module Main =
-    let private exitError e =
-        eprintfn $"%s{e}"
+    let private exitError (e: exn) =
+        eprintfn $"%A{e}"
         1
 
     let private execCmd r =
@@ -17,8 +16,10 @@ module Main =
             Commands.Version.exec () |> printfn "%s"
             0
         | [ Args.Process args ] ->
-            Commands.Process.exec args |> Task.WaitAll
-            0
+            Commands.Process.exec args
+            |> TaskResult.foldResult (fun _ -> 0) exitError
+            |> Async.AwaitTask
+            |> Async.RunSynchronously
         | _ ->
             printfn $"%A{r}"
             0
