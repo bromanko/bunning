@@ -2,6 +2,7 @@ namespace Bunning.MailCtl
 
 open System
 open PuppeteerSharp
+open FsToolkit.ErrorHandling
 
 module HtmlRenderer =
     [<RequireQualifiedAccess>]
@@ -14,7 +15,12 @@ module HtmlRenderer =
                 let! b = Puppeteer.LaunchAsync(opts)
                 browser <- b
 
-            return Error <| (NotImplementedException("Not implemented") :> exn)
+            let! page = browser.NewPageAsync()
+            do! page.SetContentAsync(html)
+            do! page.GetContentAsync() |> Task.ignore
+            let opts = ScreenshotOptions(FullPage = true)
+            do! page.ScreenshotAsync($"/Users/bromanko/Desktop/test${Guid.NewGuid().ToString()}.png", opts)
+            return Ok()
         }
 
         member IDisposable.Dispose() =
