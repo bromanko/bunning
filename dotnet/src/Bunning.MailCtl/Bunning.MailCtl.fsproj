@@ -7,6 +7,7 @@
 
     <ItemGroup>
         <Compile Include="Args.fs" />
+        <Compile Include="HtmlRenderer.fs" />
         <Compile Include="Imap.fs" />
         <Compile Include="Commands\Version.fs" />
         <Compile Include="Commands\Process.fs" />
@@ -18,6 +19,7 @@
       <PackageReference Include="FSharpx.Extras" Version="3.2.1" />
       <PackageReference Include="FsToolkit.ErrorHandling.TaskResult" Version="4.16.0" />
       <PackageReference Include="MailKit" Version="4.7.1.1" />
+      <PackageReference Include="PuppeteerSharp" Version="18.1.0" />
     </ItemGroup>
 
 </Project>

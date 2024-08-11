@@ -11,14 +11,14 @@ open MimeKit
 open MimeKit.Text
 
 module Process =
-    let private messageToImg (msg: MimeMessage) =
-        printfn $"%A{msg.GetTextBody(format = TextFormat.Html)}"
-        TaskResult.ok ()
+    let private messageToImg (renderer: HtmlRenderer.T) (msg: MimeMessage) =
+        msg.GetTextBody(format = TextFormat.Html)
+        |> renderer.Render
 
-    let private getMessages client (msgIds: UniqueId seq) =
+    let private getMessages client renderer (msgIds: UniqueId seq) =
         msgIds
         |> List.ofSeq
-        |> List.traverseTaskResultM (fun msgId -> Imap.getMessage client msgId >>= messageToImg)
+        |> List.traverseTaskResultM (fun msgId -> Imap.getMessage client msgId >>= messageToImg renderer)
 
 
     let exec (args: ParseResults<ProcessArgs>) =
@@ -27,8 +27,11 @@ module Process =
         let userName = args.GetResult(UserName)
         let password = args.GetResult(Password)
 
+        let executablePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+        let renderer = HtmlRenderer.T(executablePath)
+
         Imap.connect host port userName password
         >>= (fun client ->
             Imap.getMessageIds client
-            >>= getMessages client
+            >>= getMessages client renderer
             >>= (fun _ -> Imap.disconnect client))
