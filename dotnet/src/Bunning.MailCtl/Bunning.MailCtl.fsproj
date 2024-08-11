@@ -10,7 +10,7 @@
         <Compile Include="HtmlRenderer.fs" />
         <Compile Include="Imap.fs" />
         <Compile Include="Commands\Version.fs" />
-        <Compile Include="Commands\Process.fs" />
+        <Compile Include="Commands\GenerateImages.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

@@ -10,7 +10,7 @@ open Microsoft.FSharp.Collections
 open MimeKit
 open MimeKit.Text
 
-module Process =
+module GenerateImages =
     let private messageToImg (renderer: HtmlRenderer.T) (msg: MimeMessage) =
         msg.GetTextBody(format = TextFormat.Html)
         |> renderer.Render
@@ -21,7 +21,7 @@ module Process =
         |> List.traverseTaskResultM (fun msgId -> Imap.getMessage client msgId >>= messageToImg renderer)
 
 
-    let exec (args: ParseResults<ProcessArgs>) =
+    let exec (args: ParseResults<GenerateImages>) =
         let host = args.GetResult(Host)
         let port = args.GetResult(Port, defaultValue = 0)
         let userName = args.GetResult(UserName)

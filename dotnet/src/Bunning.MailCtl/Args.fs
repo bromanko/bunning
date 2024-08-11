@@ -3,11 +3,12 @@ namespace Bunning.MailCtl
 open Argu
 
 module Args =
-    type ProcessArgs =
+    type GenerateImages =
         | [<AltCommandLine("-h"); Mandatory>] Host of host: string
         | [<AltCommandLine("-p"); >] Port of port: int
         | [<AltCommandLine("-u"); Mandatory>] UserName of userName: string
         | [<AltCommandLine("-w"); Mandatory>] Password of password: string
+        | MessageIds of message_id: string list
 
         interface IArgParserTemplate with
             member s.Usage =
@@ -16,10 +17,11 @@ module Args =
                 | Port _ -> "Port of the IMAP server to connect to."
                 | UserName _ -> "User name to use when connecting to the IMAP server."
                 | Password _ -> "Password to use when connecting to the IMAP server."
+                | MessageIds _ -> "Message ids to generate images of. If none are specified, all messages will be processed."
 
     and MailCtlArgs =
         | Version
-        | [<CliPrefix(CliPrefix.None)>] Process of ParseResults<ProcessArgs>
+        | [<CliPrefix(CliPrefix.None)>] Process of ParseResults<GenerateImages>
 
         interface IArgParserTemplate with
             member s.Usage =

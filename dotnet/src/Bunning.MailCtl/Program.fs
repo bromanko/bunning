@@ -19,7 +19,7 @@ module Main =
             Commands.Version.exec () |> printfn "%s"
             0
         | [ Args.Process args ] ->
-            Commands.Process.exec args
+            Commands.GenerateImages.exec args
             |> TaskResult.foldResult exitSuccess exitError
             |> Async.AwaitTask
             |> Async.RunSynchronously
