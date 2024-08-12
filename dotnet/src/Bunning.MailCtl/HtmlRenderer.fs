@@ -5,6 +5,8 @@ open PuppeteerSharp
 open FsToolkit.ErrorHandling
 
 module HtmlRenderer =
+    let defaultExecutablePath () = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
     [<RequireQualifiedAccess>]
     type T(executablePath: string) =
         let mutable browser: IBrowser = null

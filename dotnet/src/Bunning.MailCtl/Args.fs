@@ -5,10 +5,12 @@ open Argu
 module Args =
     type GenerateImages =
         | [<AltCommandLine("-h"); Mandatory>] Host of host: string
-        | [<AltCommandLine("-p"); >] Port of port: int
-        | [<AltCommandLine("-u"); Mandatory>] UserName of userName: string
+        | [<AltCommandLine("-p")>] Port of port: int
+        | [<AltCommandLine("-u"); Mandatory>] UserName of user_name: string
         | [<AltCommandLine("-w"); Mandatory>] Password of password: string
-        | MessageIds of message_id: string list
+        | Message_Id of message_id: string list
+        | Browser_Path of browser_path: string
+        | [<AltCommandLine("-o"); Mandatory>] Output of output_path: string
 
         interface IArgParserTemplate with
             member s.Usage =
@@ -17,7 +19,11 @@ module Args =
                 | Port _ -> "Port of the IMAP server to connect to."
                 | UserName _ -> "User name to use when connecting to the IMAP server."
                 | Password _ -> "Password to use when connecting to the IMAP server."
-                | MessageIds _ -> "Message ids to generate images of. If none are specified, all messages will be processed."
+                | Message_Id _ ->
+                    "Message ids to generate images of. If none are specified, all messages will be processed."
+                | Browser_Path _ ->
+                    $"Path to the browser executable to use for rendering HTML. Defaults to ${HtmlRenderer.defaultExecutablePath ()}"
+                | Output _ -> "Path to output the generated images."
 
     and MailCtlArgs =
         | Version
@@ -39,5 +45,4 @@ module Args =
         with :? ArguParseException as e ->
             Result.Error e
 
-    let printUsage =
-        parser.PrintUsage
+    let printUsage = parser.PrintUsage
