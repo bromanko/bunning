@@ -11,7 +11,7 @@ module HtmlRenderer =
     type T(executablePath: string) =
         let mutable browser: IBrowser = null
 
-        member this.Render (html: string) = task {
+        member this.Render (outPath: string) (html: string) = task {
             if browser = null then
                 let opts = LaunchOptions(ExecutablePath = executablePath, HeadlessMode = HeadlessMode.False)
                 let! b = Puppeteer.LaunchAsync(opts)
@@ -21,10 +21,11 @@ module HtmlRenderer =
             do! page.SetContentAsync(html)
             do! page.GetContentAsync() |> Task.ignore
             let opts = ScreenshotOptions(FullPage = true)
-            do! page.ScreenshotAsync($"/Users/bromanko/Desktop/test${Guid.NewGuid().ToString()}.png", opts)
+            do! page.ScreenshotAsync(outPath, opts)
             return Ok()
         }
 
-        member IDisposable.Dispose() =
-            if browser <> null then
-                browser.Dispose()
+        interface IDisposable with
+            member IDisposable.Dispose() =
+                if browser <> null then
+                    browser.Dispose()

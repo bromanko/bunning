@@ -8,46 +8,56 @@ open FSharp.Control
 open FsToolkit.ErrorHandling
 
 module Imap =
-    let connect host port (userName: string) password =
-        task {
-            let client = new ImapClient()
+    [<RequireQualifiedAccess>]
+    type T() =
+        let mutable client = new ImapClient()
 
-            try
-                do! client.ConnectAsync(host, port, SecureSocketOptions.Auto)
-                do! client.AuthenticateAsync(userName, password)
-                return Ok client
-            with ex ->
-                return Error ex
+        member this.Connect host port (userName: string) password =
+            task {
+                if client.IsConnected then
+                    return Ok()
+                else
+                    try
+                        do! client.ConnectAsync(host, port, SecureSocketOptions.Auto)
+                        do! client.AuthenticateAsync(userName, password)
+                        return Ok()
+                    with ex ->
+                        return Error ex
+            }
 
-        }
+        member this.Disconnect() =
+            task {
+                if client.IsConnected = false then
+                    return Ok()
+                else
+                    try
+                        do! client.DisconnectAsync(quit = true)
+                        client.Dispose()
+                        return Ok()
+                    with ex ->
+                        return Error ex
+            }
 
-    let disconnect (client: ImapClient) =
-        task {
-            try
-                do! client.DisconnectAsync(quit = true)
-                client.Dispose()
-                return Ok()
-            with ex ->
-                return Error ex
-        }
 
+        member this.GetMessageIds() =
+            task {
+                try
+                    do! client.Inbox.OpenAsync(FolderAccess.ReadOnly) |> Task.ignore
+                    let! ids = client.Inbox.SearchAsync(SearchQuery.All)
+                    return ids |> Ok
+                with ex ->
+                    return Error ex
+            }
 
-    let getMessageIds (client: ImapClient) =
-        task {
-            try
-                do! client.Inbox.OpenAsync(FolderAccess.ReadOnly) |> Task.ignore
-                let! ids = client.Inbox.SearchAsync(SearchQuery.All)
-                return ids |> Ok
-            with ex ->
-                return Error ex
-        }
+        member this.GetMessage(msgId: UniqueId) =
+            task {
+                try
+                    do! client.Inbox.OpenAsync(FolderAccess.ReadOnly) |> Task.ignore
+                    let! msg = client.Inbox.GetMessageAsync(msgId)
+                    return Ok msg
+                with ex ->
+                    return Error ex
+            }
 
-    let getMessage (client: ImapClient) (msgId: UniqueId) =
-        task {
-            try
-                do! client.Inbox.OpenAsync(FolderAccess.ReadOnly) |> Task.ignore
-                let! msg = client.Inbox.GetMessageAsync(msgId)
-                return Ok msg
-            with ex ->
-                return Error ex
-        }
+        interface System.IDisposable with
+            member this.Dispose() = client.Dispose()

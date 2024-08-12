@@ -1,5 +1,7 @@
 namespace Bunning.MailCtl.Commands
 
+open System
+open System.IO
 open Argu
 open Bunning.MailCtl.Args
 open Bunning.MailCtl
@@ -11,14 +13,15 @@ open MimeKit
 open MimeKit.Text
 
 module GenerateImages =
-    let private messageToImg (renderer: HtmlRenderer.T) (msg: MimeMessage) =
-        msg.GetTextBody(format = TextFormat.Html)
-        |> renderer.Render
+    let private messageToImg (renderer: HtmlRenderer.T) outPath (msg: MimeMessage) =
+        let html = msg.GetTextBody(format = TextFormat.Html)
+        let outPath = Path.Combine(outPath, msg.MessageId + ".png")
+        renderer.Render outPath html
 
-    let private getMessages client renderer (msgIds: UniqueId seq) =
+    let private getMessages (imap: Imap.T) renderer outPath (msgIds: UniqueId seq) =
         msgIds
         |> List.ofSeq
-        |> List.traverseTaskResultM (fun msgId -> Imap.getMessage client msgId >>= messageToImg renderer)
+        |> List.traverseTaskResultM (fun msgId -> imap.GetMessage msgId >>= messageToImg renderer outPath)
 
 
     let exec (args: ParseResults<GenerateImages>) =
@@ -26,12 +29,19 @@ module GenerateImages =
         let port = args.GetResult(Port, defaultValue = 0)
         let userName = args.GetResult(UserName)
         let password = args.GetResult(Password)
+        let imap = new Imap.T()
 
-        let executablePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-        let renderer = HtmlRenderer.T(executablePath)
+        let executablePath =
+            args.GetResult(Browser_Path, defaultValue = HtmlRenderer.defaultExecutablePath ())
 
-        Imap.connect host port userName password
-        >>= (fun client ->
-            Imap.getMessageIds client
-            >>= getMessages client renderer
-            >>= (fun _ -> Imap.disconnect client))
+        let renderer = new HtmlRenderer.T(executablePath)
+        let outPath = args.GetResult(Output)
+
+        imap.Connect host port userName password
+        >>= imap.GetMessageIds
+        >>= getMessages imap renderer outPath
+        >>= (fun _ ->
+            let r = imap.Disconnect()
+            (imap :> IDisposable).Dispose()
+            (renderer :> IDisposable).Dispose()
+            r)
