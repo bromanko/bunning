@@ -26,14 +26,14 @@ module Args =
                 | Output _ -> "Path to output the generated images."
 
     and ParseImages =
-        | Image_Path of image_path: string list
-        | [<Mandatory>] OpenAIKey of open_ai_key: string
+        | Image of image: string list
+        | [<Mandatory>] OpenAI_Key of open_ai_key: string
 
         interface IArgParserTemplate with
             member s.Usage =
                 match s with
-                | Image_Path _ -> "Path to the image to be parsed."
-                | OpenAIKey _ -> "OpenAI API key."
+                | Image _ -> "Path to an image to be parsed."
+                | OpenAI_Key _ -> "OpenAI API key."
 
     and MailCtlArgs =
         | Version
