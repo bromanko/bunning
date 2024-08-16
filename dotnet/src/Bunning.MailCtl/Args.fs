@@ -25,15 +25,27 @@ module Args =
                     $"Path to the browser executable to use for rendering HTML. Defaults to ${HtmlRenderer.defaultExecutablePath ()}"
                 | Output _ -> "Path to output the generated images."
 
+    and ParseImages =
+        | Image_Path of image_path: string list
+        | [<Mandatory>] OpenAIKey of open_ai_key: string
+
+        interface IArgParserTemplate with
+            member s.Usage =
+                match s with
+                | Image_Path _ -> "Path to the image to be parsed."
+                | OpenAIKey _ -> "OpenAI API key."
+
     and MailCtlArgs =
         | Version
-        | [<CliPrefix(CliPrefix.None)>] Process of ParseResults<GenerateImages>
+        | [<CliPrefix(CliPrefix.None)>] Generate_Images of ParseResults<GenerateImages>
+        | [<CliPrefix(CliPrefix.None)>] Parse_Images of ParseResults<ParseImages>
 
         interface IArgParserTemplate with
             member s.Usage =
                 match s with
                 | Version -> "Display version information."
-                | Process _ -> "Process mails within an IMAP mailbox."
+                | Generate_Images _ -> "Generate image of mails within an IMAP mailbox."
+                | Parse_Images _ -> "Parse images to structured data."
 
 
     let private parser = ArgumentParser.Create<MailCtlArgs>(programName = "mailctl")
