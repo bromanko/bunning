@@ -11,6 +11,7 @@
         <Compile Include="Imap.fs" />
         <Compile Include="Commands\Version.fs" />
         <Compile Include="Commands\GenerateImages.fs" />
+        <Compile Include="Commands\ParseImages.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

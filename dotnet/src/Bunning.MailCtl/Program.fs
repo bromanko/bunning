@@ -23,6 +23,11 @@ module Main =
             |> TaskResult.foldResult exitSuccess exitError
             |> Async.AwaitTask
             |> Async.RunSynchronously
+        | [ Args.Parse_Images args ] ->
+            Commands.ParseImages.exec args
+            |> TaskResult.foldResult exitSuccess exitError
+            |> Async.AwaitTask
+            |> Async.RunSynchronously
         | _ ->
             printfn $"%A{r}"
             0
