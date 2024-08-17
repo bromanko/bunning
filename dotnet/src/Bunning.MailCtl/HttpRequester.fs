@@ -1,9 +1,11 @@
 namespace Bunning.MailCtl
 
+open System.Text.Json.Serialization
 open System.Threading
 open System.Threading.Tasks
 open FsHttp
 open FsToolkit.ErrorHandling.Operator.Task
+open FSharp.SystemTextJson
 
 type ApiConfig = { Endpoint: string; ApiKey: string }
 
@@ -12,6 +14,8 @@ type IHttpRequester =
     abstract member getRequest<'R>: cfg: ApiConfig -> Task<'R>
 
 type HttpRequester() =
+    let jsonSerializerOptions = JsonFSharpOptions.Default().ToJsonSerializerOptions()
+
     interface IHttpRequester with
         member this.postRequest<'T, 'R>(cfg: ApiConfig) (data: 'T) =
             http {
@@ -21,7 +25,7 @@ type HttpRequester() =
                 CacheControl "no-cache"
                 body
                 ContentType "application/json"
-                jsonSerialize data
+                jsonSerializeWith jsonSerializerOptions data
             }
             |> Request.sendTAsync
             >>= Response.deserializeJsonTAsync<'R>(CancellationToken.None)

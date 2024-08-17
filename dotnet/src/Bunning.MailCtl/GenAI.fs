@@ -3,6 +3,7 @@ namespace Bunning.MailCtl
 open Bunning.MailCtl.OpenAI
 open Bunning.MailCtl.OpenAI.Completions
 open FSharpx.Collections
+open FsHttp
 open FsToolkit.ErrorHandling
 
 module GenAI =
@@ -24,11 +25,15 @@ module GenAI =
         member this.ProcessImage() =
             task {
                 try
+                    Fsi.enableDebugLogs()
                     return!
                         client
                         |> completions
                         |> create (mkProcessImageReq ())
-                        |> Task.ignore
+                        |> Task.map (fun x ->
+                            printfn $"%A{x}"
+                            ()
+                            )
                         |> Task.map Ok
                 with ex ->
                     return Error ex
