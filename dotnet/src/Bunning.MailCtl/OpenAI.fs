@@ -1,7 +1,6 @@
 namespace Bunning.MailCtl
 
 open System.Threading.Tasks
-open FSharpx.Collections
 
 module OpenAI =
     type Config(apiConfig: ApiConfig, httpRequester: IHttpRequester) =
@@ -34,7 +33,7 @@ module OpenAI =
 
         type CreateRequest =
             { Model: string
-              Messages: NonEmptyList<Message> }
+              Messages: List<Message> }
 
         type ResponseFormat = JsonSchema of string // TODO: Switch to a JsonSchema object
 

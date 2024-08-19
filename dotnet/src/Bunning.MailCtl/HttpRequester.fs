@@ -19,7 +19,13 @@ type IHttpRequester =
 type HttpRequester() =
     let jsonSerializerOptions () =
         let jOpts = JsonSerializerOptions(PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower)
-        JsonFSharpOptions.Default().AddToJsonSerializerOptions(jOpts)
+        JsonFSharpOptions
+            .Default()
+            .WithTypes(JsonFSharpTypes.Minimal)
+            .WithUnionUntagged()
+            .WithUnionUnwrapRecordCases()
+            .WithIncludeRecordProperties()
+            .AddToJsonSerializerOptions(jOpts)
         jOpts
 
     let logBody (req: HttpRequestMessage) =

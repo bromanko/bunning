@@ -2,16 +2,21 @@ namespace Bunning.MailCtl
 
 open Bunning.MailCtl.OpenAI
 open Bunning.MailCtl.OpenAI.Completions
-open FSharpx.Collections
 open FsHttp
 open FsToolkit.ErrorHandling
 
 module GenAI =
-    let private mkPrompt = Message.System { Content = ""; Name = None }
+    let private promptContent = """
+I will provide you with an image of a marketing email.
+You will check if the image contains a promotion code and will extract it.
+If there are restrictions on the promotion code, you will extract the restrictions.
+You will return the extracted data as json.
+"""
+    let private mkPrompt = Message.System { Content = promptContent; Name = None }
 
     let private mkProcessImageReq () =
         { Model = "gpt-4o-mini"
-          Messages = NonEmptyList.create mkPrompt [] }
+          Messages = [mkPrompt] }
 
     [<RequireQualifiedAccess>]
     type T(openAIKey) =
