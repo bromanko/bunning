@@ -8,6 +8,13 @@ module OpenAI =
         member this.ApiConfig = apiConfig
         member this.HttpRequester = httpRequester
 
+    type ErrorResponse =
+        { Error:
+            {| Message: string
+               Type: string
+               Param: string
+               Code: string |} }
+
     module Completions =
         type SystemMessage =
             { Content: string
@@ -49,5 +56,5 @@ module OpenAI =
                 cfg.HttpRequester
             )
 
-        let create (request: CreateRequest) (cfg: Config) : Task<CreateResponse> =
-            cfg.HttpRequester.postRequest<CreateRequest, CreateResponse> cfg.ApiConfig request
+        let create (request: CreateRequest) (cfg: Config) : Task<Result<CreateResponse, ErrorResponse>> =
+            cfg.HttpRequester.postRequest<CreateRequest, ErrorResponse, CreateResponse> cfg.ApiConfig request
